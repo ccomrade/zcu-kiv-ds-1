@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: Bank Server API
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+paths:
+  /account:
+    get:
+      summary: Returns the bank account status.
+      responses:
+        '200':
+          description: Status of the bank account.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  balance:
+                    type: integer
+                    description: The account balance.
+                    example: 5000000
+                  current_seq:
+                    type: integer
+                    description: Expected sequential number of the next transaction.
+                    example: 123
+                  pending_transactions:
+                    type: integer
+                    description: The number of pending transactions with a future sequential number.
+    post:
+      summary: Adds a new transaction.
+      requestBody:
+        description: Details of the transaction.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operation:
+                  type: string
+                  enum: [CREDIT, DEBIT]
+                  description: The transaction type.
+                amount:
+                  type: integer
+                  description: The transaction amount.
+                  example: 10000
+                seq:
+                  type: integer
+                  description: The unique sequence number.
+                  example: 123
+              required:
+                - operation
+                - amount
+                - seq
+      responses:
+        '200':
+          description: Transaction accepted for processing.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+        '400':
+          description: Invalid transaction.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Bad Request

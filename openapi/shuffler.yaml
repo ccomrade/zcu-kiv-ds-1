@@ -1,0 +1,55 @@
+openapi: 3.0.0
+info:
+  title: Shuffler API
+  version: 1.0.0
+servers:
+  - url: http://localhost:5000/api/v1
+paths:
+  /messages:
+    post:
+      summary: Adds a message to be sent to the bank servers.
+      requestBody:
+        description: The message with bank account transaction details.
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                operation:
+                  type: string
+                  enum: [CREDIT, DEBIT]
+                  description: The transaction type.
+                amount:
+                  type: integer
+                  description: The transaction amount.
+                  example: 10000
+                seq:
+                  type: integer
+                  description: The unique sequence number.
+                  example: 123
+              required:
+                - operation
+                - amount
+                - seq
+      responses:
+        '200':
+          description: Message accepted for sending.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: OK
+        '400':
+          description: Invalid message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: Bad Request
