@@ -1,0 +1,15 @@
+[Unit]
+Description=Sequencer
+After=network.target
+
+[Service]
+Type=simple
+User=nobody
+Environment="SEQUENCER_SHUFFLER_ADDRESS=192.168.151.20"
+SyslogIdentifier=sequencer
+WorkingDirectory=/opt/zcu-kiv-ds-1
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+ExecStart=/usr/bin/waitress-serve --port=80 sequencer:app
+
+[Install]
+WantedBy=multi-user.target
