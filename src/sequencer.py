@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import os, logging, requests, error_handlers
+import os, requests, error_handlers
 
 from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
 app.register_blueprint(error_handlers.blueprint)
 
 SHUFFLER_ADDRESS = os.environ['SEQUENCER_SHUFFLER_ADDRESS']

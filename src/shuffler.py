@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 
-import os, logging, threading, random, requests, error_handlers
+import os, threading, random, requests, error_handlers
 
 from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
-app.logger.setLevel(logging.INFO)
 app.register_blueprint(error_handlers.blueprint)
 
 BANK_SERVERS = os.environ['SHUFFLER_BANK_SERVERS'].split(' ')
