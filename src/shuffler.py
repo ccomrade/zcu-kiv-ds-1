@@ -31,6 +31,9 @@ class MessageDispatcher:
 		self.buffer = []
 		self.condition = threading.Condition()
 
+		threading.Thread(target=self.__worker_loop, daemon=True).start()
+		app.logger.info('Worker thread started')
+
 	def __dispatch(self, buffer):
 		# make sure messages are sent in a different order
 		random.shuffle(buffer)
@@ -52,7 +55,7 @@ class MessageDispatcher:
 					app.logger.exception('Failed to contact bank server at ' + server)
 
 	def __worker_loop(self):
-		while self.running:
+		while True:
 			buffer = []
 
 			with self.condition:
@@ -61,7 +64,7 @@ class MessageDispatcher:
 					self.condition.wait()
 
 				# wait a bit for more messages
-				while self.running and len(self.buffer) < 200 and self.condition.wait(2):
+				while len(self.buffer) < 200 and self.condition.wait(2):
 					pass
 
 				# grab all messages received so far
@@ -70,23 +73,6 @@ class MessageDispatcher:
 
 			# send messages in random order
 			self.__dispatch(buffer)
-
-	def __enter__(self):
-		self.running = True
-		self.worker = threading.Thread(target=self.__worker_loop)
-
-		self.worker.start()
-		app.logger.info('Worker thread started')
-
-	def __exit__(self, type, value, traceback):
-		self.running = False
-
-		with self.condition:
-			self.condition.notify_all()
-
-		app.logger.info('Waiting for worker thread to stop...')
-		self.worker.join()
-		app.logger.info('Worker thread stopped')
 
 	def add(self, message):
 		with self.condition:
@@ -114,6 +100,4 @@ def add_message():
 	return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':
-	# ensure proper start and stop of worker thread for dispatching messages
-	with dispatcher:
-		app.run()
+	app.run()
