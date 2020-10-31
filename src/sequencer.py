@@ -2,7 +2,7 @@
 
 import os, logging, requests, error_handlers
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -44,7 +44,7 @@ def forward_message():
 
 	seq += 1
 
-	return {'status': 'OK'}
+	return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':
 	app.run()

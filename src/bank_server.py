@@ -2,7 +2,7 @@
 
 import logging, error_handlers
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -73,11 +73,11 @@ account = BankAccount(initial_balance=5000000)
 
 @app.route('/api/v1/account', methods=['GET'])
 def get_account_status():
-	return {
+	return jsonify({
 		'balance': account.balance,
 		'current_seq': account.current_seq,
 		'pending_transactions': len(account.pending_transactions)
-	}
+	})
 
 @app.route('/api/v1/account', methods=['POST'])
 def add_new_transaction():
@@ -101,7 +101,7 @@ def add_new_transaction():
 	if not account.add_transaction(Transaction(amount, seq)):
 		abort(400)
 
-	return {'status': 'OK'}
+	return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':
 	app.run()

@@ -2,7 +2,7 @@
 
 import os, logging, threading, random, requests, error_handlers
 
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 
 app = Flask(__name__)
 app.logger.setLevel(logging.INFO)
@@ -111,7 +111,7 @@ def add_message():
 
 	app.logger.info('Added operation {} with amount {} and seq {}'.format(operation, amount, seq))
 
-	return {'status': 'OK'}
+	return jsonify({'status': 'OK'})
 
 if __name__ == '__main__':
 	# ensure proper start and stop of worker thread for dispatching messages
